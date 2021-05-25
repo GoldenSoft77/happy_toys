@@ -19115,7 +19115,7 @@ input[type="checkbox"]:checked + label:after {
   -webkit-transition: .3s;
   -o-transition: .3s;
   transition: .3s;
-  width: 150px;
+  width: 130px;
   background: #fff;
   border: 1px solid #efefef;
   padding: 20px 0;

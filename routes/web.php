@@ -13,7 +13,7 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/', 'IndexController@index');
+Route::get('/', 'IndexController@index')->name('home');
 Route::get('/products','ItemController@index');
 Route::get('/category/{id}','ItemController@item');
 Route::get('/product/{id}','ItemController@single');
@@ -22,38 +22,50 @@ Route::get('/about','AboutController@index');
 
 
 // Admin Routes
-Route::get('/admin','AdminController@create');
+
+Route::namespace("Admin")->prefix('admin')->group(function(){
+   Route::get('/', 'HomeController@index')->name('admin.home');
+
+    // Admin Slider
+    Route::get('/slider','SliderController@admin');
+    Route::get('/slider/add','SliderController@create');
+    Route::post('/slider/store','SliderController@store');
+    Route::get('/slider/edit/{id}','SliderController@edit');
+    Route::post('/slider/update/{id}','SliderController@update');
+    Route::delete('/slider/delete/{id}','SliderController@destroy');
+
+    //Admin Category 
+    Route::get('/categories','CategoryController@admin');
+    Route::get('/category/add','CategoryController@create');
+    Route::post('/category/store','CategoryController@store');
+    Route::get('/category/edit/{id}','CategoryController@edit');
+    Route::post('/category/update/{id}','CategoryController@update');
+    Route::delete('/category/delete/{id}','CategoryController@destroy');
+
+    
+    //Admin Item 
+    Route::get('/items','ItemController@admin');
+    Route::get('/item/add','ItemController@create');
+    Route::post('/item/store','ItemController@store');
+    Route::get('/item/edit/{id}','ItemController@edit');
+    Route::post('/item/update/{id}','ItemController@update');
+    Route::delete('/item/img/delete/{id}','ItemController@imagedelete');
+    Route::get('/category/item/{id}','ItemController@show');
+    Route::delete('/item/delete/{id}','ItemController@destroy');
 
 
-// Admin Slider
-Route::get('/admin/slider','SliderController@admin');
-Route::get('/admin/slider/add','SliderController@create');
-Route::post('/admin/slider/store','SliderController@store');
-Route::get('/admin/slider/edit/{id}','SliderController@edit');
-Route::post('/admin/slider/update/{id}','SliderController@update');
-Route::delete('/admin/slider/delete/{id}','SliderController@destroy');
+    // Admin About us
+    Route::get('/about','AboutController@show');
+    Route::post('/about/update','AboutController@update');
 
-//Admin Category 
-Route::get('/admin/categories','CategoryController@admin');
-Route::get('/admin/category/add','CategoryController@create');
-Route::post('/admin/category/store','CategoryController@store');
-Route::get('/admin/category/edit/{id}','CategoryController@edit');
-Route::post('/admin/category/update/{id}','CategoryController@update');
-Route::delete('/admin/category/delete/{id}','CategoryController@destroy');
-
-//Admin Item 
-Route::get('/admin/items','ItemController@admin');
-Route::get('/admin/item/add','ItemController@create');
-Route::post('/admin/item/store','ItemController@store');
-Route::get('/admin/item/edit/{id}','ItemController@edit');
-Route::post('/admin/item/update/{id}','ItemController@update');
-Route::delete('/admin/item/img/delete/{id}','ItemController@imagedelete');
-Route::get('/admin/category/item/{id}','ItemController@show');
-Route::delete('/admin/item/delete/{id}','ItemController@destroy');
-
-// Admin About us
-Route::get('/admin/about','AboutController@show');
-Route::post('/admin/about/update','AboutController@update');
-
+	Route::namespace('Auth')->group(function(){
+		Route::get('/login', 'LoginController@showLoginForm')->name('admin.login');
+		Route::post('/login', 'LoginController@login');
+		Route::post('logout', 'LoginController@logout')->name('admin.logout');
+	});
+});
+// Route::get('/admin','AdminController@create');
 Auth::routes();
+Route::get('logout', '\App\Http\Controllers\Auth\LoginController@logout');
+
 

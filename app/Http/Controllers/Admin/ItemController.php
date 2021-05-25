@@ -1,6 +1,8 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Admin;
+
+use App\Http\Controllers\Controller;
 
 use Illuminate\Http\Request;
 use App\Item;
@@ -10,6 +12,10 @@ use App\CategoryItem;
 
 class ItemController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware('auth:admin');
+    }
     public function index(){
         $items = Item::orderBy('id','DESC')->paginate(15);
         $categories = Category::all();

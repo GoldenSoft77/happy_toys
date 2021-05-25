@@ -86,21 +86,21 @@
                         <!-- Header Action Start -->
                         <div class="col-md-6 col-lg-3 col-xl-4 col-6 justify-content-end">
                             <div class="header-actions">
-                                <!--  <a href="javascript:void(0)"
+                                <!-- <a href="javascript:void(0)"
                                     class="header-action-btn header-action-btn-search d-none d-lg-block"><i
-                                        class="pe-7s-search"></i></a> 
+                                        class="pe-7s-search"></i></a>  -->
                                 <div class="dropdown-user d-none d-lg-block">
                                     <a href="javascript:void(0)" class="header-action-btn"><i
                                             class="pe-7s-user"></i></a>
                                     <ul class="dropdown-menu-user">
-                                        <li><a class="dropdown-item" href="#">Usd</a></li>
-                                        <li><a class="dropdown-item" href="#">Pound</a></li>
-                                        <li><a class="dropdown-item" href="#">Taka</a></li>
+                                        <li><a class="dropdown-item" href="{{ route('register') }}">إنشاء حساب</a></li>
+                                        <!-- <li><a class="dropdown-item" href="#">Pound</a></li>
+                                        <li><a class="dropdown-item" href="#">Taka</a></li> -->
                                     </ul>
                                 </div>
-                                <a href="wishlist.html" class="header-action-btn header-action-btn-wishlist">
+                                <!-- <a href="wishlist.html" class="header-action-btn header-action-btn-wishlist">
                                     <i class="pe-7s-like"></i>
-                                </a>-->
+                                </a> -->
                                 <!-- <a href="javascript:void(0)" class="header-action-btn header-action-btn-cart">
                                     <i class="pe-7s-cart"></i>
                                     <span class="header-action-num">3</span>
