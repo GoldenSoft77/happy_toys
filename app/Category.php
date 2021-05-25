@@ -3,15 +3,18 @@
 namespace App;
 
 use Illuminate\Database\Eloquent\Model;
-use App\Product;
+use Astrotomic\Translatable\Contracts\Translatable as TranslatableContract;
+use Astrotomic\Translatable\Translatable;
+use App\Item;
 
 class Category extends Model
 {
+    use Translatable;
     protected $table = 'categories';
-    protected $fillable = ['name','img'];
+    protected $fillable = ['img'];
+    public $translatedAttributes = ['name'];
 
-
-    public function products(){
-        return $this->hasMany('App\Product');
+    public function items() {
+        return $this->belongsToMany('App\Item');
     }
 }

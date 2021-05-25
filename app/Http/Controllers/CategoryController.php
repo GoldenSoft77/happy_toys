@@ -7,71 +7,117 @@ use App\Category;
 
 class CategoryController extends Controller
 {
-     //  Show All categories
-     public function index() {
-        $categories = Category::all();
-        return view('admin.categories.categories',compact('categories'));
+
+    public function index(){
+        
     }
 
+    //  ***** Admin Functions ***** //
 
-      // Create View
-      public function create() {
-        return view ('admin.categories.category_add');
+    // Show Admin homepage
+    public function admin() {
+        $categories = Category::orderBy('id','DESC')->paginate(15);
+        return view('dashboard.category.category',compact('categories'));
     }
+    
+    public function create() {
+        return view('dashboard.category.category-add');
+    }
+    
 
-      // Add New Category
-      public function store(Request $request) {
-      
+    public function store(Request $request) {
+
+        $category = new Category;
+        $last_cat = Category::latest('id')->first();
+        if ($last_cat == NULL) {
+            $i = 1;
+        } else {
+            $i = $last_cat->id + 1;
+        }
+        $request->validate([
+            'category_title' => 'required',
+            'img' => 'required|max:2000'
+        ],
+        [
+            'category_title.required' => 'هذا الحقل مطلوب',
+            'img.required' => 'هذا الحقل مطلوب',
+            'img.uploaded' => 'أقصى حجم للصورة 2M'
+        ]);
+        
+        $category_title = $request->category_title;
         $data = [
-           
-            'name' => $request->name
-         
+            'ar' => [
+                'name' => $category_title,
+            ]
         ];
+        
         if($request->file('img')){
             $file=$request->file('img');
-            $path = 'images/categories/';
+            $path = 'images/category/';
             $name=$file->getClientOriginalName();
-            $name = $path.$name;
+            $name = $path.'category_'.$i.$name;
             $file->move($path,$name);
             $data['img'] = $name;
         }
-        $cat = Category::create($data);
-        return redirect('admin/categories')->with('message', 'New category has been added successfully');
+
+        $category->create($data);
+
+        return redirect('/admin/categories')->with('message','تم إضافة تصنيف جديد بنجاح');
+
+    }
+    
+    public function show($id) {
     }
 
-    // Edit View
+    
     public function edit($id) {
-    $category = Category::where('id',$id)->first();
-    return view ('admin.categories.category_edit',compact('category'));
-        }
-
-
-    // Update Category
-    public function update(Request $request, $id) {
         $category = Category::where('id',$id)->first();
-       
+        return view('dashboard.category.category-edit',compact('category'));
+    }
+    
+    public function update(Request $request, $id) {
+        
+        $category = Category::where('id',$id)->first();
+
+        $request->validate([
+            'category_title' => 'required',
+            'img' => 'max:2000'
+        ],
+        [
+            'category_title.required' => 'هذا الحقل مطلوب',
+            'img.uploaded' => 'أقصى حجم للصورة 2M'
+        ]);
+        
+        $category_title = $request->category_title;
         $data = [
-           
-                'name' =>$request->name
-           
+            'ar' => [
+                'name' => $category_title,
+            ]
         ];
+
         if($request->file('img')){
+            if(\File::exists(public_path($category->img))){
+                \File::delete(public_path($category->img));
+            }
             $file=$request->file('img');
-            $path = 'images/categories/';
+            $path = 'images/category/';
             $name=$file->getClientOriginalName();
-            $name = $path.$name;
+            $name = $path.$name.'_category_'.$category->id;
             $file->move($path,$name);
             $data['img'] = $name;
         }
 
         $category->update($data);
-        return redirect()->back()->with('message', 'Category has been updated successfully');
+
+        return redirect()->back()->with('message','تم تعديل بيانات التصنيف بنجاح');
     }
 
-
-    // Delete Category
     public function destroy($id) {
-        $category = Category::where('id',$id)->delete();
-        return redirect()->back()->with('message', 'Category has been removed successfully');
+        $category = Category::where('id',$id)->first();
+        if(\File::exists(public_path($category->img))){
+            \File::delete(public_path($category->img));
+        }
+        $category->delete();
+        return redirect('/admin/categories')->with('message','تم حذف التصنيف بنجاح');
     }
 }

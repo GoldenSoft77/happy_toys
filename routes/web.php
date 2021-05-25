@@ -13,38 +13,47 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/', function () {
-    return view('welcome');
-});
+Route::get('/', 'IndexController@index');
+Route::get('/products','ItemController@index');
+Route::get('/category/{id}','ItemController@item');
+Route::get('/product/{id}','ItemController@single');
+Route::get('/about','AboutController@index');
+ 
 
-Route::get('/admin', function () {
-    return view('admin.dashboard');
-});
+
+// Admin Routes
+Route::get('/admin','AdminController@create');
 
 
-// Categories 
-Route::get('/admin/categories', 'CategoryController@index');
-Route::get('/admin/categories/add', 'CategoryController@create');
-Route::get('/admin/categories/edit/{id}', 'CategoryController@edit');
-Route::post('/admin/categories/store', 'CategoryController@store');
-Route::post('/admin/categories/update/{id}', 'CategoryController@update');
-Route::delete('/admin/categories/delete/{id}', 'CategoryController@destroy');
+// Admin Slider
+Route::get('/admin/slider','SliderController@admin');
+Route::get('/admin/slider/add','SliderController@create');
+Route::post('/admin/slider/store','SliderController@store');
+Route::get('/admin/slider/edit/{id}','SliderController@edit');
+Route::post('/admin/slider/update/{id}','SliderController@update');
+Route::delete('/admin/slider/delete/{id}','SliderController@destroy');
 
-// Sliders
-Route::get('/admin/sliders', 'SliderController@index');
-Route::get('/admin/sliders/add', 'SliderController@create');
-Route::get('/admin/sliders/edit/{id}', 'SliderController@edit');
-Route::post('/admin/sliders/store', 'SliderController@store');
-Route::post('/admin/sliders/update/{id}', 'SliderController@update');
-Route::delete('/admin/sliders/delete/{id}', 'SliderController@destroy');
+//Admin Category 
+Route::get('/admin/categories','CategoryController@admin');
+Route::get('/admin/category/add','CategoryController@create');
+Route::post('/admin/category/store','CategoryController@store');
+Route::get('/admin/category/edit/{id}','CategoryController@edit');
+Route::post('/admin/category/update/{id}','CategoryController@update');
+Route::delete('/admin/category/delete/{id}','CategoryController@destroy');
 
-// Products
-Route::get('/admin/products', 'ProductController@index');
-Route::get('/admin/products/add', 'ProductController@create');
-Route::get('/admin/products/edit/{id}', 'ProductController@edit');
-Route::post('/admin/products/store', 'ProductController@store');
-Route::post('/admin/products/update/{id}', 'ProductController@update');
-Route::delete('/admin/products/delete/{id}', 'ProductController@destroy');
+//Admin Item 
+Route::get('/admin/items','ItemController@admin');
+Route::get('/admin/item/add','ItemController@create');
+Route::post('/admin/item/store','ItemController@store');
+Route::get('/admin/item/edit/{id}','ItemController@edit');
+Route::post('/admin/item/update/{id}','ItemController@update');
+Route::delete('/admin/item/img/delete/{id}','ItemController@imagedelete');
+Route::get('/admin/category/item/{id}','ItemController@show');
+Route::delete('/admin/item/delete/{id}','ItemController@destroy');
+
+// Admin About us
+Route::get('/admin/about','AboutController@show');
+Route::post('/admin/about/update','AboutController@update');
+
 Auth::routes();
 
-Route::get('/home', 'HomeController@index')->name('home');

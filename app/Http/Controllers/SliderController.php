@@ -4,78 +4,135 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Slider;
+use Illuminate\Support\Str;
 
 class SliderController extends Controller
 {
-     //  Show All slider
-     public function index() {
-        $sliders = Slider::all();
-        return view('admin.sliders.sliders',compact('sliders'));
+
+    public function index() {
+        
     }
 
+    
+    //  ***** Admin Functions ***** //
 
-      // Create View
-      public function create() {
-        return view ('admin.sliders.slider_add');
+    // Show Admin homepage
+    public function admin() {
+        $slides = Slider::orderBy('id','DESC')->paginate(15);
+        return view('dashboard.slider.slider',compact('slides'));
     }
+    
+    public function create() {
+        return view('dashboard.slider.slider-add');
+    }
+    
 
-      // Add New Slider
-      public function store(Request $request) {
-      
+    public function store(Request $request) {
+
+        $slide = new Slider;
+        $last_slide = Slider::latest('id')->first();
+        if ($last_slide == NULL) {
+            $i = 1;
+        } else {
+            $i = $last_slide->id + 1;
+        }
+        $request->validate([
+            'slider_title' => 'required',
+            'slider_desc' => 'required',
+            'img' => 'required|max:2000'
+        ],
+        [
+            'slider_title.required' => 'هذا الحقل مطلوب',
+            'slider_desc.required' => 'هذا الحقل مطلوب',
+            'img.required' => 'هذا الحقل مطلوب',
+            'img.uploaded' => 'أقصى حجم للصورة 2M'
+        ]);
+        
+        $slider_title = $request->slider_title;
+        $slider_desc = $request->slider_desc;
+        $slider_link = $request->slider_link;
         $data = [
-           
-            'title' => $request->title,
-            'description' => $request->description,
-            'URL' => $request->URL
-         
+            'link' => $slider_link,
+            'ar' => [
+                'title' => $slider_title,
+                'description' => $slider_desc,
+            ]
         ];
+        
         if($request->file('img')){
             $file=$request->file('img');
-            $path = 'images/sliders/';
+            $path = 'images/slider/';
             $name=$file->getClientOriginalName();
-            $name = $path.$name;
+            $name = $path.'slider_'.$i.$name;
             $file->move($path,$name);
             $data['img'] = $name;
         }
-        $slider = Slider::create($data);
-        return redirect('admin/sliders')->with('message', 'New Slider has been added successfully');
+
+        $slide->create($data);
+
+        return redirect('/admin/slider')->with('message','تم إضافة سلايد جديد بنجاح');
+
+    }
+    
+    public function show($id) {
     }
 
-    // Edit View
+    
     public function edit($id) {
-    $slider = Slider::where('id',$id)->first();
-    return view ('admin.sliders.slider_edit',compact('slider'));
-        }
-
-
-    // Update Category
+        $slide = Slider::where('id',$id)->first();
+        return view('dashboard.slider.slider-edit',compact('slide'));
+    }
+    
     public function update(Request $request, $id) {
-        $slider = Slider::where('id',$id)->first();
-       
+        
+        $slide = Slider::where('id',$id)->first();
+
+        $request->validate([
+            'slider_title' => 'required',
+            'slider_desc' => 'required',
+            'img' => 'max:2000'
+        ],
+        [
+            'slider_title.required' => 'هذا الحقل مطلوب',
+            'slider_desc.required' => 'هذا الحقل مطلوب',
+            'img.uploaded' => 'أقصى حجم للصورة 2M'
+        ]);
+        
+        $slider_title = $request->slider_title;
+        $slider_desc = $request->slider_desc;
+        $slider_link = $request->slider_link;
         $data = [
-           
-            'title' => $request->title,
-            'description' => $request->description,
-            'URL' => $request->URL
-         
+            'link' => $slider_link,
+            'ar' => [
+                'title' => $slider_title,
+                'description' => $slider_desc,
+            ]
         ];
+
         if($request->file('img')){
+            if(\File::exists(public_path($slide->img))){
+                \File::delete(public_path($slide->img));
+            }
             $file=$request->file('img');
-            $path = 'images/sliders/';
+            $path = 'images/slider/';
             $name=$file->getClientOriginalName();
-            $name = $path.$name;
+            $name = $path.$name.'_slider_'.$slide->id;
             $file->move($path,$name);
             $data['img'] = $name;
         }
 
-        $slider->update($data);
-        return redirect()->back()->with('message', 'Slider has been updated successfully');
+        $slide->update($data);
+
+        return redirect()->back()->with('message','تم تعديل بيانات السلايد بنجاح');
     }
 
-
-    // Delete Category
     public function destroy($id) {
-        $slider = Slider::where('id',$id)->delete();
-        return redirect()->back()->with('message', 'Slider has been removed successfully');
+        $slide = Slider::where('id',$id)->first();
+        if(\File::exists(public_path($slide->img))){
+            \File::delete(public_path($slide->img));
+        }
+        $slide->delete();
+        return redirect('/admin/slider')->with('message','تم حذف السلايد بنجاح');
     }
+    
 }
