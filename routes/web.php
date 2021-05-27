@@ -18,7 +18,8 @@ Route::get('/products','ItemController@index');
 Route::get('/category/{id}','ItemController@item');
 Route::get('/product/{id}','ItemController@single');
 Route::get('/about','AboutController@index');
- 
+Route::get('contact', 'IndexController@contact')->name('contact');
+
 
 
 // Admin Routes
