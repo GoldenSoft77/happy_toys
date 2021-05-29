@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Slider;
 use Illuminate\Support\Str;
+use Image;
 
 class SliderController extends Controller
 {
@@ -43,13 +44,13 @@ class SliderController extends Controller
         $request->validate([
             'slider_title' => 'required',
             'slider_desc' => 'required',
-            'img' => 'required|max:2000'
+            // 'img' => 'required|max:2000'
         ],
         [
             'slider_title.required' => 'هذا الحقل مطلوب',
             'slider_desc.required' => 'هذا الحقل مطلوب',
             'img.required' => 'هذا الحقل مطلوب',
-            'img.uploaded' => 'أقصى حجم للصورة 2M'
+            // 'img.uploaded' => 'أقصى حجم للصورة 2M'
         ]);
         
         $slider_title = $request->slider_title;
@@ -64,13 +65,23 @@ class SliderController extends Controller
         ];
         
         if($request->file('img')){
-            $file=$request->file('img');
+            $image=$request->file('img');
+
+            $input['img'] = $image->getClientOriginalName();
             $path = 'images/slider/';
-            $name=$file->getClientOriginalName();
-            $name = $path.'slider_'.$i.$name;
-            $file->move($path,$name);
-            $data['img'] = $name;
+            $destinationPath = public_path('/images/slider');
+            $img = Image::make($image->getRealPath());
+            $img->resize(1260, 500, function ($constraint) {
+                $constraint->aspectRatio();
+            })->save($destinationPath.'/'. $input['img']);
+       
+            // $destinationPath = public_path('/images/slider');
+            // $image->move($destinationPath,  $input['img']);
+            $name = $path.$input['img'];
+            
+          $data['img'] =  $name;
         }
+
 
         $slide->create($data);
 
@@ -94,12 +105,12 @@ class SliderController extends Controller
         $request->validate([
             'slider_title' => 'required',
             'slider_desc' => 'required',
-            'img' => 'max:2000'
+            // 'img' => 'max:2000'
         ],
         [
             'slider_title.required' => 'هذا الحقل مطلوب',
             'slider_desc.required' => 'هذا الحقل مطلوب',
-            'img.uploaded' => 'أقصى حجم للصورة 2M'
+            // 'img.uploaded' => 'أقصى حجم للصورة 2M'
         ]);
         
         $slider_title = $request->slider_title;
@@ -117,12 +128,21 @@ class SliderController extends Controller
             if(\File::exists(public_path($slide->img))){
                 \File::delete(public_path($slide->img));
             }
-            $file=$request->file('img');
+            $image=$request->file('img');
+
+            $input['img'] = $image->getClientOriginalName();
             $path = 'images/slider/';
-            $name=$file->getClientOriginalName();
-            $name = $path.$name.'_slider_'.$slide->id;
-            $file->move($path,$name);
-            $data['img'] = $name;
+            $destinationPath = public_path('/images/slider');
+            $img = Image::make($image->getRealPath());
+            $img->resize(1260, 500, function ($constraint) {
+                $constraint->aspectRatio();
+            })->save($destinationPath.'/'. $input['img']);
+       
+            // $destinationPath = public_path('/images/slider');
+            // $image->move($destinationPath,  $input['img']);
+            $name = $path.$input['img'];
+            
+          $data['img'] =  $name;
         }
 
         $slide->update($data);

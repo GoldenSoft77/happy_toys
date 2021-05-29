@@ -7,6 +7,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\About;
 use App\Category;
+use Image;
 
 class AboutController extends Controller
 {
@@ -14,12 +15,7 @@ class AboutController extends Controller
     {
         $this->middleware('auth:admin');
     }
-    public function index(){
-        $about = About::all()->first();
-        $categories = Category::all();
-        return view('front_views.about',compact('about','categories'));
-    }
-
+  
     //  ***** Admin Functions ***** //
 
     // Show About edit page   
@@ -35,11 +31,11 @@ class AboutController extends Controller
 
         $request->validate([
             'about_desc' => 'required',
-            'about_img' => 'max:2000'
+            // 'about_img' => 'max:2000'
         ],
         [
             'about_desc.required' => 'هذا الحقل مطلوب',
-            'about_img.uploaded' => 'أقصى حجم للصورة 2M'
+            // 'about_img.uploaded' => 'أقصى حجم للصورة 2M'
         ]);
         
         $about_desc = $request->about_desc;
@@ -53,12 +49,21 @@ class AboutController extends Controller
             if(\File::exists(public_path($about->img))){
                 \File::delete(public_path($about->img));
             }
-            $file=$request->file('about_img');
+            $image=$request->file('about_img');
+
+            $input['img'] = $image->getClientOriginalName();
             $path = 'images/about/';
-            $name=$file->getClientOriginalName();
-            $name = $path.$name;
-            $file->move($path,$name);
-            $data['img'] = $name;
+            $destinationPath = public_path('/images/about');
+            $img = Image::make($image->getRealPath());
+            $img->resize(445, 400, function ($constraint) {
+                $constraint->aspectRatio();
+            })->save($destinationPath.'/'. $input['img']);
+       
+            // $destinationPath = public_path('/images/about');
+            // $image->move($destinationPath,  $input['img']);
+            $name = $path.$input['img'];
+            
+          $data['img'] =  $name;
         }
 
         $about->update($data);

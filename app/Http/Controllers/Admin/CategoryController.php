@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 
 use Illuminate\Http\Request;
 use App\Category;
+use Image;
 
 class CategoryController extends Controller
 {
@@ -42,12 +43,12 @@ class CategoryController extends Controller
         }
         $request->validate([
             'category_title' => 'required',
-            'img' => 'required|max:2000'
+            // 'img' => 'required|max:2000'
         ],
         [
             'category_title.required' => 'هذا الحقل مطلوب',
             'img.required' => 'هذا الحقل مطلوب',
-            'img.uploaded' => 'أقصى حجم للصورة 2M'
+            // 'img.uploaded' => 'أقصى حجم للصورة 2M'
         ]);
         
         $category_title = $request->category_title;
@@ -57,13 +58,31 @@ class CategoryController extends Controller
             ]
         ];
         
+        // if($request->file('img')){
+        //     $file=$request->file('img');
+        //     $path = 'images/category/';
+        //     $name=$file->getClientOriginalName();
+        //     $name = $path.'category_'.$i.$name;
+        //     $file->move($path,$name);
+        //     $data['img'] = $name;
+        // }
+
         if($request->file('img')){
-            $file=$request->file('img');
+            $image=$request->file('img');
+
+            $input['img'] = $image->getClientOriginalName();
             $path = 'images/category/';
-            $name=$file->getClientOriginalName();
-            $name = $path.'category_'.$i.$name;
-            $file->move($path,$name);
-            $data['img'] = $name;
+            $destinationPath = public_path('/images/category');
+            $img = Image::make($image->getRealPath());
+            $img->resize(255, 255, function ($constraint) {
+                $constraint->aspectRatio();
+            })->save($destinationPath.'/'. $input['img']);
+       
+            // $destinationPath = public_path('/images/category');
+            // $image->move($destinationPath,  $input['img']);
+            $name = $path.$input['img'];
+            
+          $data['img'] =  $name;
         }
 
         $category->create($data);
@@ -87,11 +106,11 @@ class CategoryController extends Controller
 
         $request->validate([
             'category_title' => 'required',
-            'img' => 'max:2000'
+            // 'img' => 'max:2000'
         ],
         [
             'category_title.required' => 'هذا الحقل مطلوب',
-            'img.uploaded' => 'أقصى حجم للصورة 2M'
+            // 'img.uploaded' => 'أقصى حجم للصورة 2M'
         ]);
         
         $category_title = $request->category_title;
@@ -105,12 +124,21 @@ class CategoryController extends Controller
             if(\File::exists(public_path($category->img))){
                 \File::delete(public_path($category->img));
             }
-            $file=$request->file('img');
+            $image=$request->file('img');
+
+            $input['img'] = $image->getClientOriginalName();
             $path = 'images/category/';
-            $name=$file->getClientOriginalName();
-            $name = $path.$name.'_category_'.$category->id;
-            $file->move($path,$name);
-            $data['img'] = $name;
+            $destinationPath = public_path('/images/category');
+            $img = Image::make($image->getRealPath());
+            $img->resize(225, 225, function ($constraint) {
+                $constraint->aspectRatio();
+            })->save($destinationPath.'/'. $input['img']);
+       
+            // $destinationPath = public_path('/images/category');
+            // $image->move($destinationPath,  $input['img']);
+            $name = $path.$input['img'];
+            
+          $data['img'] =  $name;
         }
 
         $category->update($data);

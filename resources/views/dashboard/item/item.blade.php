@@ -24,7 +24,11 @@
 				@foreach ($items as $item)
 				<div class="col-md-4 col-sm-6 col-12">
 					<div class="guide-block">
-						<img src="{{ asset($item->images[0]->img) }}" class="img-fluid">
+					@foreach($item->images as $image)
+					@if($item->images->first()==$image)
+						<img src="{{ asset($image->img) }}" class="img-fluid">
+						@endif
+						@endforeach
 						<h3>{{ $item->translate('ar')->name }}</h3>
 						<ul>
 							<li>

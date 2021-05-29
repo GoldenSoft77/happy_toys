@@ -9,6 +9,7 @@ use App\Item;
 use App\ItemImage;
 use App\Category;
 use App\CategoryItem;
+use Image;
 
 class ItemController extends Controller
 {
@@ -16,26 +17,6 @@ class ItemController extends Controller
     {
         $this->middleware('auth:admin');
     }
-    public function index(){
-        $items = Item::orderBy('id','DESC')->paginate(15);
-        $categories = Category::all();
-        return view('front_views.products',compact('items','categories'));
-    }
-
-    public function item($id) {
-        $category = Category::find($id);
-        $items = $category->items;
-        $categories = Category::all();
-        return view('front_views.products-cat',compact('items','categories'));
-    }
-
-    public function single($id) {
-        $pro = Item::where('id',$id)->first();
-        $items = Item::orderBy('id','DESC')->take(10)->get();
-        $categories = Category::all();
-        return view('front_views.single-product',compact('pro','items','categories'));
-    }
-
     //  ***** Admin Functions ***** //
 
     // Show all items
@@ -68,13 +49,13 @@ class ItemController extends Controller
             'item_price_real' => 'min:0',
             'img' => 'required',
             'category' => 'required',
-            'img.*' => 'image|max:2000'
+            // 'img.*' => 'image|max:2000'
         ],
         [
             'category_title.required' => 'هذا الحقل مطلوب',
             'img.required' => 'هذا الحقل مطلوب',
-            'img.*.max' => 'أقصى حجم لكل صورة 2M',
-            'img.*.uploaded' => 'أقصى حجم لكل صورة 2M',
+            // 'img.*.max' => 'أقصى حجم لكل صورة 2M',
+            // 'img.*.uploaded' => 'أقصى حجم لكل صورة 2M',
             'category' => 'هذا الحقل مطلوب'
         ]);
         
@@ -121,9 +102,16 @@ class ItemController extends Controller
             $path = 'images/items/'.$i.'/';
             $files=$request->file('img');
             foreach($files as $file) {
-                $name=$file->getClientOriginalName();
-                $name = $path.$name;
-                $file->move($path,$name);
+              
+
+                $input['img'] = $file->getClientOriginalName();
+                $path = 'images/items/';
+                $destinationPath = public_path('/images/items');
+                $img = Image::make($file->getRealPath());
+                $img->resize(560, 445, function ($constraint) {
+                    $constraint->aspectRatio();
+                })->save($destinationPath.'/'. $input['img']);
+                $name = $path.$input['img'];
                 ItemImage::insert( [
                     'img'=>  $name,
                     'item_id'=> $item->id
@@ -191,13 +179,13 @@ class ItemController extends Controller
             'item_price' => 'min:0',
             'item_price_new' => 'min:0',
             'item_price_real' => 'min:0',
-            'img.*' => 'image|max:2000',
+            // 'img.*' => 'image|max:2000',
             'category' => 'required',
         ],
         [
             'category_title.required' => 'هذا الحقل مطلوب',
-            'img.*.max' => 'أقصى حجم لكل صورة 2M',
-            'img.*.uploaded' => 'أقصى حجم لكل صورة 2M',
+            // 'img.*.max' => 'أقصى حجم لكل صورة 2M',
+            // 'img.*.uploaded' => 'أقصى حجم لكل صورة 2M',
             'category.required' => 'هذا الحقل مطلوب',
         ]);
         
@@ -238,9 +226,14 @@ class ItemController extends Controller
             $path = 'images/items/'.$i.'/';
             $files=$request->file('img');
             foreach($files as $file) {
-                $name=$file->getClientOriginalName();
-                $name = $path.$name;
-                $file->move($path,$name);
+                $input['img'] = $file->getClientOriginalName();
+                $path = 'images/items/';
+                $destinationPath = public_path('/images/items');
+                $img = Image::make($file->getRealPath());
+                $img->resize(560, 445, function ($constraint) {
+                    $constraint->aspectRatio();
+                })->save($destinationPath.'/'. $input['img']);
+                $name = $path.$input['img'];
                 ItemImage::insert( [
                     'img'=>  $name,
                     'item_id'=> $item->id
