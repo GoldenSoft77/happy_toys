@@ -73,11 +73,11 @@ class SliderController extends Controller
             $img = Image::make($image->getRealPath());
             $img->resize(1260, 500, function ($constraint) {
                 $constraint->aspectRatio();
-            })->save($destinationPath.'/'. $input['img']);
+            })->save($destinationPath.'/'.time().$input['img']);
        
             // $destinationPath = public_path('/images/slider');
             // $image->move($destinationPath,  $input['img']);
-            $name = $path.$input['img'];
+            $name = $path.time().$input['img'];
             
           $data['img'] =  $name;
         }
@@ -136,11 +136,11 @@ class SliderController extends Controller
             $img = Image::make($image->getRealPath());
             $img->resize(1260, 500, function ($constraint) {
                 $constraint->aspectRatio();
-            })->save($destinationPath.'/'. $input['img']);
+            })->save($destinationPath.'/'.time().$input['img']);
        
             // $destinationPath = public_path('/images/slider');
             // $image->move($destinationPath,  $input['img']);
-            $name = $path.$input['img'];
+            $name = $path.time().$input['img'];
             
           $data['img'] =  $name;
         }

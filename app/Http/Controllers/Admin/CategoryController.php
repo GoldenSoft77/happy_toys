@@ -76,11 +76,11 @@ class CategoryController extends Controller
             $img = Image::make($image->getRealPath());
             $img->resize(255, 255, function ($constraint) {
                 $constraint->aspectRatio();
-            })->save($destinationPath.'/'. $input['img']);
+            })->save($destinationPath.'/'.time().$input['img']);
        
             // $destinationPath = public_path('/images/category');
             // $image->move($destinationPath,  $input['img']);
-            $name = $path.$input['img'];
+            $name = $path.time().$input['img'];
             
           $data['img'] =  $name;
         }
@@ -132,11 +132,11 @@ class CategoryController extends Controller
             $img = Image::make($image->getRealPath());
             $img->resize(225, 225, function ($constraint) {
                 $constraint->aspectRatio();
-            })->save($destinationPath.'/'. $input['img']);
+            })->save($destinationPath.'/'.time().$input['img']);
        
             // $destinationPath = public_path('/images/category');
             // $image->move($destinationPath,  $input['img']);
-            $name = $path.$input['img'];
+            $name = $path.time().$input['img'];
             
           $data['img'] =  $name;
         }

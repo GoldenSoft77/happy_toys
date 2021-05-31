@@ -110,8 +110,8 @@ class ItemController extends Controller
                 $img = Image::make($file->getRealPath());
                 $img->resize(560, 445, function ($constraint) {
                     $constraint->aspectRatio();
-                })->save($destinationPath.'/'. $input['img']);
-                $name = $path.$input['img'];
+                })->save($destinationPath.'/'.time().$input['img']);
+                $name = $path.time().$input['img'];
                 ItemImage::insert( [
                     'img'=>  $name,
                     'item_id'=> $item->id
@@ -232,8 +232,8 @@ class ItemController extends Controller
                 $img = Image::make($file->getRealPath());
                 $img->resize(560, 445, function ($constraint) {
                     $constraint->aspectRatio();
-                })->save($destinationPath.'/'. $input['img']);
-                $name = $path.$input['img'];
+                })->save($destinationPath.'/'.time().$input['img']);
+                $name = $path.time().$input['img'];
                 ItemImage::insert( [
                     'img'=>  $name,
                     'item_id'=> $item->id

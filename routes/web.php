@@ -40,7 +40,7 @@ Route::namespace("Admin")->prefix('admin')->group(function(){
     Route::get('/category/add','CategoryController@create');
     Route::post('/category/store','CategoryController@store')->name('admin.category.store');
     Route::get('/category/edit/{id}','CategoryController@edit');
-    Route::post('/category/update/{id}','CategoryController@update')->name('admin.category.update');
+    Route::post('/category/update/{id}','CategoryController@update');
     Route::delete('/category/delete/{id}','CategoryController@destroy');
 
     

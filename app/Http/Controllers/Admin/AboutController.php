@@ -57,11 +57,11 @@ class AboutController extends Controller
             $img = Image::make($image->getRealPath());
             $img->resize(445, 400, function ($constraint) {
                 $constraint->aspectRatio();
-            })->save($destinationPath.'/'. $input['img']);
+            })->save($destinationPath.'/'.time().$input['img']);
        
             // $destinationPath = public_path('/images/about');
             // $image->move($destinationPath,  $input['img']);
-            $name = $path.$input['img'];
+            $name = $path.time().$input['img'];
             
           $data['img'] =  $name;
         }

@@ -12,9 +12,8 @@
 					تعديل بيانات المنتج
 				</h2>
 			</div>
-			<form class="form-group col-12" method="POST" enctype="multipart/form-data" id="upload_image_form"
-                action="javascript:void(0)">
-			<!-- <form class="form-group col-12" method="POST" enctype="multipart/form-data" action="{{ url('admin/item/update/'.$item->id) }}"> -->
+		
+			 <form class="form-group col-12" method="POST" enctype="multipart/form-data" action="{{ url('admin/item/update/'.$item->id) }}"> 
 				@csrf
 				<div class="group">
 					<label>اسم المنتج: <span class="require">*</span></label>
@@ -118,7 +117,7 @@
 						@endforeach
 					</div>
 					<label>إضافة صور جديدة: </label>
-					<input type="file" name="img[]" accept="image/*" multiple id="image">
+					<input type="file" name="img[]" accept="image/*" multiple id="item_image">
 					<small>يمكن رفع صورة واحدة أو أكثر (يجب أن يكون حجم كل صورة أقل من 2 ميغابايت)</small>
 					@if ($errors->has('img'))
 						<span class="text-danger">{{ $errors->first('img') }}</span>
@@ -173,52 +172,5 @@
 </p>
 @endif
 <!-- ./Message -->
-<script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
 
-<script type="text/javascript">
-
-
-
-$("#image").change(function(){
-
-   $('#image_preview').html("");
-
-   var total_file=document.getElementById("image").files.length;
-
-   for(var i=0;i<total_file;i++)
-
-   {
-
-	$('#image_preview').append("<img style='width:200px;height:auto;display:inline-block;margin-right:5px;margin-top:5px;' src='"+URL.createObjectURL(event.target.files[i])+"'>");
-
-   }
-
-});
-
-$('#upload_image_form').submit(function(e) {
-        e.preventDefault();
-
-        var formData = new FormData(this);
-
-        $.ajax({
-            type: 'POST',
-            url: "{{ route('admin.item.update',$item->id)}}",
-            data: formData,
-            cache: false,
-            contentType: false,
-            processData: false,
-            success: (data) => {
-                this.reset();
-                alert('تم تعديل بيانات المنتج بنجاح');
-                $('#image_preview_container').attr('src', '/images/image-preview.jpg');
-                window.location.href = "/admin/items";
-            },
-            error: function(data) {
-                console.log(data);
-            }
-        });
-    });
-
-
-</script>		
 @include('dashboard.layouts.footer')		

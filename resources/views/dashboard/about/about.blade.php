@@ -13,9 +13,8 @@
 				</h2>
 			</div>
 
-			<form class="form-group col-12" method="POST" enctype="multipart/form-data" id="upload_image_form"
-                action="javascript:void(0)">
-			<!-- <form class="form-group col-12" method="POST" enctype="multipart/form-data" action="{{ url('admin/about/update') }}"> -->
+		
+		 <form class="form-group col-12" method="POST" enctype="multipart/form-data" action="{{ url('admin/about/update') }}">
 				@csrf
 				<div class="group">
 					<label>صورة صفحة من نحن:</label>
@@ -58,50 +57,5 @@
 </p>
 @endif
 <!-- ./Message -->
-<script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
 
-<script type="text/javascript">
-$(document).ready(function(e) {
-
-    $.ajaxSetup({
-        headers: {
-            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-        }
-    });
-
-    $('#image').change(function() {
-
-        let reader = new FileReader();
-        reader.onload = (e) => {
-            $('#image_preview_container').attr('src', e.target.result);
-        }
-        reader.readAsDataURL(this.files[0]);
-
-    });
-
-    $('#upload_image_form').submit(function(e) {
-        e.preventDefault();
-
-        var formData = new FormData(this);
-
-        $.ajax({
-            type: 'POST',
-            url: "{{ route('admin.about.update',$about->id)}}",
-            data: formData,
-            cache: false,
-            contentType: false,
-            processData: false,
-            success: (data) => {
-                this.reset();
-                alert('تم تعديل بيانات صفحة من نحن بنجاح');
-                $('#image_preview_container').attr('src', '/images/image-preview.jpg');
-                window.location.href = "/admin/about";
-            },
-            error: function(data) {
-                console.log(data);
-            }
-        });
-    });
-});
-</script>	
 @include('dashboard.layouts.footer')		
